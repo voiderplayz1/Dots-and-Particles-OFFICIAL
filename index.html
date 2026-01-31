@@ -85,13 +85,13 @@
         <div class="init-prompt">Click anywhere to begin!</div>
     </div>
 
-    <div id="stats-ui">
+    <div id="stats-ui" onmousedown="event.stopPropagation()">
         <div id="fpsCounter">FPS: 0</div>
         <button id="fs-btn" style="background:none; border:1px solid #333; color:#fff; font-size:8px; margin-top:5px; width:100%;">Fullscreen</button>
         <button id="toggle-gui-btn" style="background:none; border:1px solid #333; color:#fff; font-size:8px; margin-top:5px; width:100%;">Hide Interface</button>
     </div>
     
-    <div id="ui">
+    <div id="ui" onmousedown="event.stopPropagation()">
         <div id="statusText" style="margin-bottom:10px; font-weight:bold; color:#00ffcc;">Particles</div>
         <div class="slider-group"><label>Particles <span id="pCount" class="val">50,000</span></label><input type="range" id="pSlider" min="1000" max="1500000" step="1000" value="50000"></div>
         <div class="slider-group"><label>Explosion <span id="ePower" class="val">1200</span></label><input type="range" id="eSlider" min="50" max="5000" step="50" value="1200"></div>
@@ -112,7 +112,7 @@
         <button id="bhBtn" style="margin-top: 5px; width: 100%;">BLACK HOLE: OFF</button>
     </div>
 
-    <div id="music-ui">
+    <div id="music-ui" onmousedown="event.stopPropagation()">
         <div class="time-display"><span id="cur-time">0</span>s / <span id="total-time">0</span>s</div>
         <div id="song-name-top" class="song-info-right">Awaiting Input.. (press play to start it)</div>
         <input type="range" id="music-progress" value="0">
@@ -140,7 +140,8 @@
         let blackHoleActive = false, cymaticActive = false, lastExplosionTime = 0;
         let isMusicPlaying = false, instantVol = 0;
         const mouse = { x: 0, y: 0, isDown: false, wasDown: false, glX: 0, glY: 0 };
-        let cPos = { x: 0, y: 0, vx: 0.005, vy: 0.005, timer: 0, curve: 0 };
+        // Removed curve from initial obj, will calculate dynamically
+        let cPos = { x: 0, y: 0, vx: 0.005, vy: 0.005, timer: 0 }; 
 
         let player;
         const tracks = ['jCEZOqPqhLs', 'jd6dPtN9E9g', 'L_UBFnwaOgY', 'hraj31Bc5Gc', '76r8I6OPQ8I', 'edjvrsu3zbY', 'KA8pKSDQv9A'];
@@ -170,7 +171,7 @@
             tIdx = (tIdx + 1) % tracks.length;
             player.loadVideoById(tracks[tIdx]);
         }
-
+        
         function playPrev() {
             tIdx = (tIdx - 1 + tracks.length) % tracks.length;
             player.loadVideoById(tracks[tIdx]);
@@ -215,7 +216,8 @@
             mouse.glX = (e.clientX/window.innerWidth)*2-1; 
             mouse.glY = (e.clientY/window.innerHeight)*-2+1; 
         };
-        window.onmousedown = (e) => { if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') mouse.isDown = true; };
+        // This is safe now because UI elements stop propagation
+        window.onmousedown = (e) => { mouse.isDown = true; };
         window.onmouseup = () => mouse.isDown = false;
 
         const prg = gl.createProgram();
@@ -242,24 +244,72 @@
 
             let tx = mouse.glX, ty = mouse.glY, active = mouse.isDown;
 
+            // --- CYMATIC LOGIC UPDATE ---
             if(cymaticActive && isMusicPlaying) {
                 cPos.timer -= dt;
+                
+                // If timer runs out, pick a NEW target based on 60/40 rule
                 if(cPos.timer <= 0) {
-                    const angle = Math.random()*Math.PI*2;
-                    const speed = 0.004 + (instantVol * 0.018);
+                    let targetX, targetY;
+                    let r = Math.random();
+
+                    // 60% chance to target Edges
+                    if(r < 0.60) {
+                        // Pick Top/Bottom or Left/Right edge
+                        if(Math.random() < 0.5) {
+                            // Target X Edge (Left or Right)
+                            targetX = Math.sign(Math.random()-0.5) * (0.85 + Math.random()*0.1); 
+                            targetY = (Math.random()*2 - 1);
+                        } else {
+                            // Target Y Edge (Top or Bottom)
+                            targetX = (Math.random()*2 - 1);
+                            targetY = Math.sign(Math.random()-0.5) * (0.85 + Math.random()*0.1); 
+                        }
+                    } else {
+                        // 40% chance to target Center Area
+                        targetX = (Math.random()-0.5) * 0.8; 
+                        targetY = (Math.random()-0.5) * 0.8;
+                    }
+
+                    // Calculate vector towards target
+                    let dx = targetX - cPos.x;
+                    let dy = targetY - cPos.y;
+                    let angle = Math.atan2(dy, dx);
+                    
+                    // Add some random curve/swirl to the path
+                    angle += (Math.random()-0.5) * 0.5;
+
+                    let speed = 0.005 + (instantVol * 0.012);
                     cPos.vx = Math.cos(angle) * speed;
                     cPos.vy = Math.sin(angle) * speed;
-                    cPos.timer = 80 + Math.random()*100;
-                    cPos.curve = (Math.random()-0.5) * 0.1;
-                }
-                cPos.vx += cPos.vy * cPos.curve * Math.sin(now*0.01);
-                cPos.vy -= cPos.vx * cPos.curve * Math.sin(now*0.01);
-                cPos.x += cPos.vx * dt; cPos.y += cPos.vy * dt;
 
-                if(Math.abs(cPos.x) >= 0.98) { cPos.x = Math.sign(cPos.x) * 0.97; let t = cPos.vx; cPos.vx = -cPos.vy; cPos.vy = t; }
-                if(Math.abs(cPos.y) >= 0.98) { cPos.y = Math.sign(cPos.y) * 0.97; let t = cPos.vx; cPos.vx = cPos.vy; cPos.vy = -t; }
+                    // Set timer for next decision (random duration)
+                    cPos.timer = 120 + Math.random()*150;
+                }
+
+                // Apply movement
+                cPos.x += cPos.vx * dt;
+                cPos.y += cPos.vy * dt;
+
+                // --- WALL BOUNCE FIX ---
+                // Removed the 90-degree flip. Now it bounces elastically.
+                // Added 0.96 clamp to prevent sticking in the wall.
+                let hitWall = false;
+                if(cPos.x >= 0.98) { cPos.x = 0.97; cPos.vx *= -1; hitWall = true; }
+                else if(cPos.x <= -0.98) { cPos.x = -0.97; cPos.vx *= -1; hitWall = true; }
+                
+                if(cPos.y >= 0.98) { cPos.y = 0.97; cPos.vy *= -1; hitWall = true; }
+                else if(cPos.y <= -0.98) { cPos.y = -0.97; cPos.vy *= -1; hitWall = true; }
+
+                // If stuck in a corner for some reason, force a push to center
+                if(Math.abs(cPos.x) > 0.95 && Math.abs(cPos.y) > 0.95) {
+                    cPos.vx = -Math.sign(cPos.x) * 0.01;
+                    cPos.vy = -Math.sign(cPos.y) * 0.01;
+                }
+
                 tx = cPos.x; ty = cPos.y; active = true;
             }
+            // ---------------------------
 
             const released = mouse.wasDown && !mouse.isDown && (Date.now()-lastExplosionTime > 1200) && !cymaticActive;
             if(released) lastExplosionTime = Date.now();
