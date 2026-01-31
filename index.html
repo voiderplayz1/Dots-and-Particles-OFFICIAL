@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hybrid Supernova - Final Master (2x Canvas Power)</title>
+    <title>Hybrid Supernova - Final Master</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; cursor: crosshair; }
         canvas { display: block; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; }
         
         #init-overlay {
             position: fixed; inset: 0; background: #000; z-index: 999;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: #00ffcc; font-family: 'Segoe UI', sans-serif; cursor: pointer;
-            letter-spacing: 10px; font-weight: bold; font-size: 20px;
-            text-shadow: 0 0 20px #00ffcc;
+            padding: 40px; text-align: center; line-height: 1.6;
         }
+
+        #init-overlay h1 { 
+            letter-spacing: 10px; font-weight: bold; font-size: 28px; 
+            text-shadow: 0 0 20px #00ffcc; margin-bottom: 20px;
+        }
+
+        #init-overlay p {
+            max-width: 600px; font-size: 14px; color: #fff; letter-spacing: 1px;
+            margin-bottom: 30px; text-transform: uppercase;
+        }
+
+        .init-prompt { font-size: 12px; color: #00ffcc; animate: pulse 2s infinite; }
 
         #ui, #music-ui {
             position: absolute; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -75,16 +75,24 @@
 </head>
 <body>
 
-    <div id="init-overlay" onclick="initializeSystem()">INITIALIZE SYSTEM</div>
+    <div id="init-overlay" onclick="initializeSystem()">
+        <h1>Welcome!</h1>
+        <p>
+            You may use the config on the top left to control how this simulation works.<br><br>
+            In the top right you can see your FPS, a full screen mode, and a GUI hide button.<br><br>
+            To use Cymatic mode, turn the mode on and start playing the 7 songs I've added, you may skip them at any time.
+        </p>
+        <div class="init-prompt">CLICK ANYWHERE TO BEGIN</div>
+    </div>
 
     <div id="stats-ui">
         <div id="fpsCounter">FPS: 0</div>
-        <button id="fs-btn" style="background:none; border:1px solid #333; color:#aaa; font-size:8px; margin-top:5px; width:100%;">FULLSCREEN</button>
-        <button id="toggle-gui-btn" style="background:none; border:1px solid #333; color:#555; font-size:8px; margin-top:5px; width:100%;">HIDE INTERFACE</button>
+        <button id="fs-btn" style="background:none; border:1px solid #333; color:#fff; font-size:8px; margin-top:5px; width:100%;">FULLSCREEN</button>
+        <button id="toggle-gui-btn" style="background:none; border:1px solid #333; color:#fff; font-size:8px; margin-top:5px; width:100%;">HIDE INTERFACE</button>
     </div>
     
     <div id="ui">
-        <div id="statusText" style="margin-bottom:10px; font-weight:bold; color:#00ffcc;">CORE_STABLE</div>
+        <div id="statusText" style="margin-bottom:10px; font-weight:bold; color:#00ffcc;">CORE STABLE</div>
         <div class="slider-group"><label>Particles <span id="pCount" class="val">50,000</span></label><input type="range" id="pSlider" min="1000" max="1500000" step="1000" value="50000"></div>
         <div class="slider-group"><label>Explosion <span id="ePower" class="val">1200</span></label><input type="range" id="eSlider" min="50" max="5000" step="50" value="1200"></div>
         <div class="slider-group"><label>Drift <span id="fVal" class="val">3.0</span></label><input type="range" id="fSlider" min="1" max="5" step="0.1" value="3.0"></div>
@@ -100,13 +108,13 @@
         </div>
 
         <div class="btn-container"><button id="btnWebGL" class="active">WebGL</button><button id="btnCanvas">Canvas 2D</button></div>
-        <button id="cymaticBtn" style="margin-top: 5px; width: 100%;">CYMATIC_PATH: OFF</button>
-        <button id="bhBtn" style="margin-top: 5px; width: 100%;">BLACK_HOLE: OFF</button>
+        <button id="cymaticBtn" style="margin-top: 5px; width: 100%;">CYMATIC PATH: OFF</button>
+        <button id="bhBtn" style="margin-top: 5px; width: 100%;">BLACK HOLE: OFF</button>
     </div>
 
     <div id="music-ui">
         <div class="time-display"><span id="cur-time">0</span>s / <span id="total-time">0</span>s</div>
-        <div id="song-name-top" class="song-info-right">AWAITING_INPUT...</div>
+        <div id="song-name-top" class="song-info-right">AWAITING INPUT...</div>
         <input type="range" id="music-progress" value="0">
         
         <div class="slider-group">
@@ -139,13 +147,14 @@
 
         function initializeSystem() {
             document.getElementById('init-overlay').style.display = 'none';
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            if(player) player.playVideo();
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e => console.log("Fullscreen blocked"));
+            // Music start removed here to allow manual control as requested
         }
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('yt-player', {
                 height: '0', width: '0', videoId: tracks[tIdx],
+                playerVars: { 'autoplay': 0, 'controls': 0 },
                 events: { 
                     'onReady': (e) => { e.target.setVolume(50); },
                     'onStateChange': (e) => { 
@@ -163,7 +172,7 @@
         }
 
         setInterval(() => {
-            if(player && player.getPlayerState() === 1) {
+            if(player && typeof player.getCurrentTime === 'function' && player.getPlayerState() === 1) {
                 const cur = player.getCurrentTime(), dur = player.getDuration();
                 document.getElementById('cur-time').innerText = Math.floor(cur);
                 document.getElementById('total-time').innerText = Math.floor(dur);
@@ -299,12 +308,11 @@
             const colors = [document.getElementById('c1').value, document.getElementById('c2').value, document.getElementById('c3').value];
             for(let i=0; i<Math.min(count, 120000); i++) {
                 const i2 = i*2;
-                let px=(posArr[i2]+1)*hW, py=(1-(posArr[i2+1]+1)*0.5)*h;
+                let px=(posArr[i2]+1) * hW, py=(1-(posArr[i2+1]+1)*0.5)*h;
                 let vx=velArr[i2]*hW, vy=-velArr[i2+1]*hH;
                 let dx=targetX-px, dy=targetY-py, dist=Math.sqrt(dx*dx+dy*dy)||1;
                 if(active) { vx += (dx * speedArr[i] + (-dy/dist) * swirlForce) * dt; vy += (dy * speedArr[i] + (dx/dist) * swirlForce) * dt; vx *= 0.88; vy *= 0.88; }
                 else if(released) { 
-                    // AMPLIFIED: 2x Explosion power for Canvas Mode (0.08 -> 0.16)
                     const f = (1/dist)*(explosionStrength*0.16); 
                     const spread = Math.random() * 2.0 + 1.0;
                     vx = (-dx/dist)*f*spread; vy = (-dy/dist)*f*spread; 
@@ -339,8 +347,4 @@
         requestAnimationFrame(animate);
     </script>
 </body>
-</html>
-    
-  </body>
-  
 </html>
