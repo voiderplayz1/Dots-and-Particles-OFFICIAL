@@ -5,40 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hybrid Supernova - Final Master</title>
     <style>
-        :root {
-            --bg-color: #000;
-            --accent-color: #00ffcc;
-            --ui-bg: rgba(10, 10, 10, 0.95);
-            --secondary-accent: #ff00ff;
-        }
-
-        body { margin: 0; overflow: hidden; background: var(--bg-color); cursor: crosshair; }
+        body { margin: 0; overflow: hidden; background: #000; cursor: crosshair; }
         canvas { display: block; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; }
         
         #init-overlay {
             position: fixed; inset: 0; background: #000; z-index: 999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--accent-color); font-family: 'Segoe UI', sans-serif; cursor: pointer;
+            color: #00ffcc; font-family: 'Segoe UI', sans-serif; cursor: pointer;
             padding: 40px; text-align: center; line-height: 1.6;
         }
 
         #init-overlay h1 { 
             letter-spacing: 10px; font-weight: bold; font-size: 28px; 
-            text-shadow: 0 0 20px var(--accent-color); margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ffcc; margin-bottom: 20px;
         }
 
         #init-overlay p {
             max-width: 600px; font-size: 14px; color: #fff; letter-spacing: 1px;
-            margin-bottom: 30px;
+            margin-bottom: 30px; text-transform: uppercase;
         }
 
-        .init-prompt { font-size: 12px; color: var(--accent-color); animation: pulse 2s infinite; font-weight: bold; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        .init-prompt { font-size: 12px; color: #00ffcc; animate: pulse 2s infinite; }
 
         #ui, #music-ui {
             position: absolute; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
-            pointer-events: auto; letter-spacing: 0.5px; font-size: 11px;
-            background: var(--ui-bg); padding: 18px; border-radius: 12px;
+            pointer-events: auto; text-transform: uppercase; letter-spacing: 1px; font-size: 10px;
+            background: rgba(10, 10, 10, 0.95); padding: 18px; border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1); width: 240px; 
             box-shadow: 0 8px 32px rgba(0,0,0,0.9); user-select: none; z-index: 20; backdrop-filter: blur(8px);
         }
@@ -53,7 +45,7 @@
         }
 
         .song-info-right { 
-            color: var(--accent-color); font-weight: bold; width: 100%; 
+            color: #00ffcc; font-weight: bold; width: 100%; 
             white-space: normal; word-wrap: break-word; line-height: 1.4; margin: 8px 0; 
         }
         .time-display { color: #666; font-family: monospace; font-size: 9px; }
@@ -62,21 +54,21 @@
             width: 100%; height: 3px; background: #222; border-radius: 2px; appearance: none; 
             pointer-events: auto; margin-bottom: 15px; outline: none;
         }
-        #music-progress::-webkit-slider-thumb { appearance: none; width: 10px; height: 10px; background: var(--accent-color); border-radius: 50%; cursor: pointer; }
+        #music-progress::-webkit-slider-thumb { appearance: none; width: 10px; height: 10px; background: #00ffcc; border-radius: 50%; cursor: pointer; }
 
         .slider-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 4px; color: #888; }
-        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--accent-color); background: #333; height: 4px; border-radius: 2px; }
-        .val { float: right; color: var(--accent-color); font-family: monospace; }
+        label { display: block; margin-bottom: 4px; color: #666; }
+        input[type=range] { width: 100%; cursor: pointer; accent-color: #00ffcc; background: #333; height: 4px; border-radius: 2px; }
+        .val { float: right; color: #00ffcc; font-family: monospace; }
         
         .btn-container { display: flex; gap: 5px; margin-top: 10px; }
         button {
             flex: 1; background: #1a1a1a; color: #fff; border: 1px solid #333;
-            padding: 8px; border-radius: 4px; font-size: 10px; cursor: pointer; transition: 0.1s;
+            padding: 8px; border-radius: 4px; font-size: 9px; cursor: pointer; text-transform: uppercase; transition: 0.1s;
         }
-        button:hover { border-color: var(--accent-color); background: #222; }
-        button.active { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
-        button.cymatic-active { background: var(--secondary-accent); color: #fff; border-color: var(--secondary-accent); box-shadow: 0 0 15px rgba(255,0,255,0.4); }
+        button:hover { border-color: #00ffcc; background: #222; }
+        button.active { background: #00ffcc; color: #000; border-color: #00ffcc; font-weight: bold; }
+        button.cymatic-active { background: #ff00ff; color: #fff; border-color: #ff00ff; box-shadow: 0 0 15px rgba(255,0,255,0.4); }
         
         #yt-player { display: none; }
     </style>
@@ -88,8 +80,7 @@
         <p>
             You may use the config on the top left to control how this simulation works.<br><br>
             In the top right you can see your FPS, a full screen mode, and a GUI hide button.<br><br>
-            To use Cymatic mode, turn the mode on and start playing the 7 songs I've added, you may skip them at any time. 
-            If an ad appears, use the "Last Track" feature to navigate back if needed.
+            To use Cymatic mode, turn the mode on and start playing the 7 songs I've added, you may skip them at any time. If an ad appears, use the "Skip Track" feature to skip them, or use an ad blocker.
         </p>
         <div class="init-prompt">Click anywhere to begin!</div>
     </div>
@@ -101,7 +92,7 @@
     </div>
     
     <div id="ui">
-        <div id="statusText" style="margin-bottom:10px; font-weight:bold; color:var(--accent-color);">Control Module</div>
+        <div id="statusText" style="margin-bottom:10px; font-weight:bold; color:#00ffcc;">Particles</div>
         <div class="slider-group"><label>Particles <span id="pCount" class="val">50,000</span></label><input type="range" id="pSlider" min="1000" max="1500000" step="1000" value="50000"></div>
         <div class="slider-group"><label>Explosion <span id="ePower" class="val">1200</span></label><input type="range" id="eSlider" min="50" max="5000" step="50" value="1200"></div>
         <div class="slider-group"><label>Drift <span id="fVal" class="val">3.0</span></label><input type="range" id="fSlider" min="1" max="5" step="0.1" value="3.0"></div>
@@ -117,13 +108,13 @@
         </div>
 
         <div class="btn-container"><button id="btnWebGL" class="active">WebGL</button><button id="btnCanvas">Canvas 2D</button></div>
-        <button id="cymaticBtn" style="margin-top: 5px; width: 100%;">Cymatic Path: Off</button>
-        <button id="bhBtn" style="margin-top: 5px; width: 100%;">Black Hole: Off</button>
+        <button id="cymaticBtn" style="margin-top: 5px; width: 100%;">CYMATIC PATH: OFF</button>
+        <button id="bhBtn" style="margin-top: 5px; width: 100%;">BLACK HOLE: OFF</button>
     </div>
 
     <div id="music-ui">
         <div class="time-display"><span id="cur-time">0</span>s / <span id="total-time">0</span>s</div>
-        <div id="song-name-top" class="song-info-right">Awaiting Audio Sync..</div>
+        <div id="song-name-top" class="song-info-right">Awaiting Input.. (press play to start it)</div>
         <input type="range" id="music-progress" value="0">
         
         <div class="slider-group">
@@ -132,7 +123,7 @@
         </div>
 
         <div class="btn-container">
-            <button id="last-track-btn">Last Track</button>
+            <button id="prev-track-btn">Last Track</button>
             <button id="play-pause-btn">Play</button>
             <button id="next-track-btn">Next Track</button>
         </div>
@@ -148,11 +139,6 @@
         let mode = 'webgl', count = 50000, explosionStrength = 1200, driftFactor = 3.0, swirlForce = 1.6;
         let blackHoleActive = false, cymaticActive = false, lastExplosionTime = 0;
         let isMusicPlaying = false, instantVol = 0;
-        
-        // Damping variables
-        let dampedVol = 0;
-        const dampingFactor = 0.08; 
-        
         const mouse = { x: 0, y: 0, isDown: false, wasDown: false, glX: 0, glY: 0 };
         let cPos = { x: 0, y: 0, vx: 0.005, vy: 0.005, timer: 0, curve: 0 };
 
@@ -162,19 +148,18 @@
 
         function initializeSystem() {
             document.getElementById('init-overlay').style.display = 'none';
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e => {});
-            if(player && player.playVideo) player.playVideo();
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e => console.log("Fullscreen blocked"));
         }
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('yt-player', {
                 height: '0', width: '0', videoId: tracks[tIdx],
-                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1 },
+                playerVars: { 'autoplay': 0, 'controls': 0 },
                 events: { 
                     'onReady': (e) => { e.target.setVolume(50); },
                     'onStateChange': (e) => { 
                         isMusicPlaying = (e.data === YT.PlayerState.PLAYING);
-                        document.getElementById('play-pause-btn').innerText = isMusicPlaying ? "Pause" : "Play";
+                        document.getElementById('play-pause-btn').innerText = isMusicPlaying ? "PAUSE" : "PLAY";
                         if(e.data === YT.PlayerState.ENDED) playNext();
                     }
                 }
@@ -186,7 +171,7 @@
             player.loadVideoById(tracks[tIdx]);
         }
 
-        function playLast() {
+        function playPrev() {
             tIdx = (tIdx - 1 + tracks.length) % tracks.length;
             player.loadVideoById(tracks[tIdx]);
         }
@@ -197,13 +182,12 @@
                 document.getElementById('cur-time').innerText = Math.floor(cur);
                 document.getElementById('total-time').innerText = Math.floor(dur);
                 document.getElementById('music-progress').value = (cur / dur) * 100;
-                let title = player.getVideoData().title;
-                if (title) document.getElementById('song-name-top').innerText = title;
+                document.getElementById('song-name-top').innerText = player.getVideoData().title;
             }
         }, 500);
 
         const glCanvas = document.getElementById('glCanvas'), c2dCanvas = document.getElementById('c2dCanvas');
-        const gl = glCanvas.getContext('webgl', { antialias: true, preserveDrawingBuffer: false });
+        const gl = glCanvas.getContext('webgl', { antialias: false });
         const ctx = c2dCanvas.getContext('2d', { alpha: false });
 
         const MAX = 1500000;
@@ -249,14 +233,11 @@
         let lastT = 0, frames = 0, nextFps = 0;
 
         function animate(now) {
-            const dt = Math.min((now - lastT) / 16.67, 3); lastT = now; frames++;
+            const dt = (now - lastT) / 16.67; lastT = now; frames++;
             if(now > nextFps) { document.getElementById('fpsCounter').innerText = `FPS: ${frames}`; frames=0; nextFps=now+1000; }
 
             if (isMusicPlaying) {
-                let targetVol = (Math.sin(now/80)*0.35 + 0.45) + (Math.random()*0.2);
-                // Damping Algorithm
-                dampedVol += (targetVol - dampedVol) * dampingFactor;
-                instantVol = dampedVol;
+                instantVol = (Math.sin(now/80)*0.35 + 0.45) + (Math.random()*0.2);
             } else { instantVol = 0; }
 
             let tx = mouse.glX, ty = mouse.glY, active = mouse.isDown;
@@ -265,22 +246,22 @@
                 cPos.timer -= dt;
                 if(cPos.timer <= 0) {
                     const angle = Math.random()*Math.PI*2;
-                    const speed = 0.004 + (instantVol * 0.02);
+                    const speed = 0.004 + (instantVol * 0.018);
                     cPos.vx = Math.cos(angle) * speed;
                     cPos.vy = Math.sin(angle) * speed;
-                    cPos.timer = 60 + Math.random()*100;
-                    cPos.curve = (Math.random()-0.5) * 0.15;
+                    cPos.timer = 80 + Math.random()*100;
+                    cPos.curve = (Math.random()-0.5) * 0.1;
                 }
                 cPos.vx += cPos.vy * cPos.curve * Math.sin(now*0.01);
                 cPos.vy -= cPos.vx * cPos.curve * Math.sin(now*0.01);
                 cPos.x += cPos.vx * dt; cPos.y += cPos.vy * dt;
 
-                if(Math.abs(cPos.x) >= 0.95) cPos.vx *= -1;
-                if(Math.abs(cPos.y) >= 0.95) cPos.vy *= -1;
+                if(Math.abs(cPos.x) >= 0.98) { cPos.x = Math.sign(cPos.x) * 0.97; let t = cPos.vx; cPos.vx = -cPos.vy; cPos.vy = t; }
+                if(Math.abs(cPos.y) >= 0.98) { cPos.y = Math.sign(cPos.y) * 0.97; let t = cPos.vx; cPos.vx = cPos.vy; cPos.vy = -t; }
                 tx = cPos.x; ty = cPos.y; active = true;
             }
 
-            const released = mouse.wasDown && !mouse.isDown && (Date.now()-lastExplosionTime > 800) && !cymaticActive;
+            const released = mouse.wasDown && !mouse.isDown && (Date.now()-lastExplosionTime > 1200) && !cymaticActive;
             if(released) lastExplosionTime = Date.now();
 
             if(mode === 'webgl') runWebGL(dt, released, tx, ty, active);
@@ -296,16 +277,16 @@
                 const i2 = i*2;
                 let dx = tx - posArr[i2], dy = ty - posArr[i2+1], d = Math.sqrt(dx*dx+dy*dy)||0.001;
                 if(active) {
-                    const react = cymaticActive ? (0.02 + instantVol*0.04) : 0.02;
                     const sx = -dy/d, sy = dx/d;
-                    velArr[i2] += (dx * speedArr[i] * dt) + (sx * swirlForce * react * dt);
-                    velArr[i2+1] += (dy * speedArr[i] * dt) + (sy * swirlForce * react * dt);
+                    velArr[i2] += (dx * speedArr[i] * dt) + (sx * swirlForce * 0.02 * dt);
+                    velArr[i2+1] += (dy * speedArr[i] * dt) + (sy * swirlForce * 0.02 * dt);
                     velArr[i2] *= Math.pow(0.88, dt); velArr[i2+1] *= Math.pow(0.88, dt);
                 } else if(released) {
-                    const force = (1.0/d) * (explosionStrength/18000);
+                    const force = (1.0/d) * (explosionStrength/20000);
                     const spread = Math.random() * 2.5 + 0.5;
                     velArr[i2] = (-dx/d)*force*spread; 
                     velArr[i2+1] = (-dy/d)*force*spread;
+                    velArr[i2] += (dy/d)*0.05; velArr[i2+1] += (-dx/d)*0.05;
                 } else {
                     velArr[i2] *= friction; velArr[i2+1] *= friction;
                     if(blackHoleActive) { velArr[i2] += (dx/d)*0.002*dt; velArr[i2+1] += (dy/d)*0.002*dt; }
@@ -325,22 +306,24 @@
         }
 
         function runCanvas(dt, released, tx, ty, active) {
-            ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0,0,c2dCanvas.width,c2dCanvas.height);
+            ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(0,0,c2dCanvas.width,c2dCanvas.height);
             const friction = Math.pow(0.82 + (driftFactor/5)*0.17, dt);
             const w=c2dCanvas.width, h=c2dCanvas.height, hW=w/2, hH=h/2;
             const targetX = (tx + 1) * hW, targetY = (1 - (ty + 1) * 0.5) * h;
             const colors = [document.getElementById('c1').value, document.getElementById('c2').value, document.getElementById('c3').value];
-            const limit = Math.min(count, 80000);
-            for(let i=0; i<limit; i++) {
+            for(let i=0; i<Math.min(count, 120000); i++) {
                 const i2 = i*2;
                 let px=(posArr[i2]+1) * hW, py=(1-(posArr[i2+1]+1)*0.5)*h;
                 let vx=velArr[i2]*hW, vy=-velArr[i2+1]*hH;
                 let dx=targetX-px, dy=targetY-py, dist=Math.sqrt(dx*dx+dy*dy)||1;
                 if(active) { vx += (dx * speedArr[i] + (-dy/dist) * swirlForce) * dt; vy += (dy * speedArr[i] + (dx/dist) * swirlForce) * dt; vx *= 0.88; vy *= 0.88; }
                 else if(released) { 
-                    const f = (1/dist)*(explosionStrength*0.15); vx = (-dx/dist)*f; vy = (-dy/dist)*f; 
+                    const f = (1/dist)*(explosionStrength*0.16); 
+                    const spread = Math.random() * 2.0 + 1.0;
+                    vx = (-dx/dist)*f*spread; vy = (-dy/dist)*f*spread; 
+                    vx += (dy/dist)*2; vy += (-dx/dist)*2;
                 }
-                else { vx *= friction; vy *= friction; }
+                else { vx *= friction; vy *= friction; if(blackHoleActive) { vx += (dx/dist)*0.5*dt; vy += (dy/dist)*0.5*dt; } }
                 px+=vx*dt; py+=vy*dt;
                 if(px<0) px=w; else if(px>w) px=0; if(py<0) py=h; else if(py>h) py=0;
                 posArr[i2]=(px/hW)-1; posArr[i2+1]=((h-py)/hH)-1; velArr[i2]=vx/hW; velArr[i2+1]=-vy/hH;
@@ -352,9 +335,9 @@
         document.getElementById('music-vol-control').oninput = function() { player.setVolume(this.value); document.getElementById('mVolVal').innerText = this.value+'%'; };
         document.getElementById('play-pause-btn').onclick = () => isMusicPlaying ? player.pauseVideo() : player.playVideo();
         document.getElementById('next-track-btn').onclick = () => playNext();
-        document.getElementById('last-track-btn').onclick = () => playLast(); 
-        document.getElementById('cymaticBtn').onclick = function() { cymaticActive=!cymaticActive; this.classList.toggle('cymatic-active'); this.innerText=`Cymatic Path: ${cymaticActive?'On':'Off'}`; };
-        document.getElementById('bhBtn').onclick = function() { blackHoleActive=!blackHoleActive; this.classList.toggle('active'); this.innerText=`Black Hole: ${blackHoleActive?'On':'Off'}`; };
+        document.getElementById('prev-track-btn').onclick = () => playPrev();
+        document.getElementById('cymaticBtn').onclick = function() { cymaticActive=!cymaticActive; this.classList.toggle('cymatic-active'); this.innerText=`CYMATIC_PATH: ${cymaticActive?'ON':'OFF'}`; };
+        document.getElementById('bhBtn').onclick = function() { blackHoleActive=!blackHoleActive; this.classList.toggle('active'); this.innerText=`BLACK_HOLE: ${blackHoleActive?'ON':'OFF'}`; };
         document.getElementById('btnWebGL').onclick = function() { mode='webgl'; glCanvas.style.display='block'; c2dCanvas.style.display='none'; this.classList.add('active'); document.getElementById('btnCanvas').classList.remove('active'); };
         document.getElementById('btnCanvas').onclick = function() { mode='canvas'; glCanvas.style.display='none'; c2dCanvas.style.display='block'; this.classList.add('active'); document.getElementById('btnWebGL').classList.remove('active'); };
         document.getElementById('pSlider').oninput = function() { count=parseInt(this.value); document.getElementById('pCount').innerText=count.toLocaleString(); };
