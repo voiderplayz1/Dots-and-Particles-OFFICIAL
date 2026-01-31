@@ -93,10 +93,10 @@
     
     <div id="ui" onmousedown="event.stopPropagation()">
         <div id="statusText" style="margin-bottom:10px; font-weight:bold; color:#00ffcc;">Particles</div>
-        <div class="slider-group"><label>Particles <span id="pCount" class="val">50,000</span></label><input type="range" id="pSlider" min="1000" max="1500000" step="1000" value="50000"></div>
-        <div class="slider-group"><label>Explosion <span id="ePower" class="val">1200</span></label><input type="range" id="eSlider" min="50" max="5000" step="50" value="1200"></div>
-        <div class="slider-group"><label>Drift <span id="fVal" class="val">3.0</span></label><input type="range" id="fSlider" min="1" max="5" step="0.1" value="3.0"></div>
-        <div class="slider-group"><label>Spiral <span id="sVal" class="val">1.6</span></label><input type="range" id="sSlider" min="0.1" max="5" step="0.1" value="1.6"></div>
+        <div class="slider-group"><label>Total Particles <span id="pCount" class="val">50,000</span></label><input type="range" id="pSlider" min="1000" max="1500000" step="1000" value="50000"></div>
+        <div class="slider-group"><label>Explosive Power <span id="ePower" class="val">1200</span></label><input type="range" id="eSlider" min="50" max="5000" step="50" value="1200"></div>
+        <div class="slider-group"><label>Particle Drift <span id="fVal" class="val">3.0</span></label><input type="range" id="fSlider" min="1" max="5" step="0.1" value="3.0"></div>
+        <div class="slider-group"><label>Spiral Speed / Distance <span id="sVal" class="val">1.6</span></label><input type="range" id="sSlider" min="0.1" max="5" step="0.1" value="1.6"></div>
         
         <div class="slider-group">
             <label>Spectrum</label>
@@ -108,8 +108,8 @@
         </div>
 
         <div class="btn-container"><button id="btnWebGL" class="active">WebGL</button><button id="btnCanvas">Canvas 2D</button></div>
-        <button id="cymaticBtn" style="margin-top: 5px; width: 100%;">CYMATIC PATH: OFF</button>
-        <button id="bhBtn" style="margin-top: 5px; width: 100%;">BLACK HOLE: OFF</button>
+        <button id="cymaticBtn" style="margin-top: 5px; width: 100%;">Cymatic Pathing: OFF</button>
+        <button id="bhBtn" style="margin-top: 5px; width: 100%;">Black Hole: OFF</button>
     </div>
 
     <div id="music-ui" onmousedown="event.stopPropagation()">
@@ -144,7 +144,20 @@
         let cPos = { x: 0, y: 0, vx: 0.005, vy: 0.005, timer: 0 }; 
 
         let player;
-        const tracks = ['jCEZOqPqhLs', 'jd6dPtN9E9g', 'L_UBFnwaOgY', 'hraj31Bc5Gc', '76r8I6OPQ8I', 'edjvrsu3zbY', 'KA8pKSDQv9A'];
+        const tracks = [
+  'D-wzV05n_Q0', // cloud break
+  'k67nuEylbAo', // 5th Dimension (Temathy Remix)
+  '8pMEe4etZ-E', // Perpetual Descent
+  '48y9-eBv2uQ', // reincarnation and the void
+  'QRk3y0DXgIA', // ayana
+  'vV1V681f9yI', // VINTAGE MINEFIELD
+  'Jmq9rNu5PbQ', // TURBULENCE
+  'zfIYnH6tsZ0', // CRASH CAPITAL
+  'nl14x1ZhC-k', // Airbrushed (RAC Remix)
+  'Ec-M_HXuS8k', // MECHANICAL GOD
+  '1M4Xyr1CEzQ', // the crystal voidlands (AREA BOSS)
+  'Xg7WQc8_Ogs'  // In The Image Of
+];
         let tIdx = 0;
 
         function initializeSystem() {
