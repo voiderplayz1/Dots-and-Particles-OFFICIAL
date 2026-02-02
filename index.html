@@ -216,7 +216,7 @@
             mouse.glX = (e.clientX/window.innerWidth)*2-1; 
             mouse.glY = (e.clientY/window.innerHeight)*-2+1; 
         };
-        // This is safe now because UI elements stop propagation
+        // grug
         window.onmousedown = (e) => { mouse.isDown = true; };
         window.onmouseup = () => mouse.isDown = false;
 
@@ -244,46 +244,46 @@
 
             let tx = mouse.glX, ty = mouse.glY, active = mouse.isDown;
 
-            // --- CYMATIC LOGIC UPDATE ---
+            // --- CYMATIC LOGIC GOD MY MIND IS DYING ---
             if(cymaticActive && isMusicPlaying) {
                 cPos.timer -= dt;
                 
-                // If timer runs out, pick a NEW target based on 60/40 rule
+                // i want to cry
                 if(cPos.timer <= 0) {
                     let targetX, targetY;
                     let r = Math.random();
 
                     // 60% chance to target Edges
                     if(r < 0.60) {
-                        // Pick Top/Bottom or Left/Right edge
+                        // heareaaeaeae
                         if(Math.random() < 0.5) {
-                            // Target X Edge (Left or Right)
+                            // *sob*
                             targetX = Math.sign(Math.random()-0.5) * (0.85 + Math.random()*0.1); 
                             targetY = (Math.random()*2 - 1);
                         } else {
-                            // Target Y Edge (Top or Bottom)
+                            // *sob*
                             targetX = (Math.random()*2 - 1);
                             targetY = Math.sign(Math.random()-0.5) * (0.85 + Math.random()*0.1); 
                         }
                     } else {
-                        // 40% chance to target Center Area
+                        // death
                         targetX = (Math.random()-0.5) * 0.8; 
                         targetY = (Math.random()-0.5) * 0.8;
                     }
 
-                    // Calculate vector towards target
+                    // cry revisited
                     let dx = targetX - cPos.x;
                     let dy = targetY - cPos.y;
                     let angle = Math.atan2(dy, dx);
                     
-                    // Add some random curve/swirl to the path
+                    // Add some random curve/swirl
                     angle += (Math.random()-0.5) * 0.5;
 
                     let speed = 0.005 + (instantVol * 0.012);
                     cPos.vx = Math.cos(angle) * speed;
                     cPos.vy = Math.sin(angle) * speed;
 
-                    // Set timer for next decision (random duration)
+                    // Set timer for next decision
                     cPos.timer = 120 + Math.random()*150;
                 }
 
@@ -291,9 +291,7 @@
                 cPos.x += cPos.vx * dt;
                 cPos.y += cPos.vy * dt;
 
-                // --- WALL BOUNCE FIX ---
-                // Removed the 90-degree flip. Now it bounces elastically.
-                // Added 0.96 clamp to prevent sticking in the wall.
+                // grug
                 let hitWall = false;
                 if(cPos.x >= 0.98) { cPos.x = 0.97; cPos.vx *= -1; hitWall = true; }
                 else if(cPos.x <= -0.98) { cPos.x = -0.97; cPos.vx *= -1; hitWall = true; }
@@ -309,7 +307,7 @@
 
                 tx = cPos.x; ty = cPos.y; active = true;
             }
-            // ---------------------------
+            // math paid off i guess
 
             const released = mouse.wasDown && !mouse.isDown && (Date.now()-lastExplosionTime > 1200) && !cymaticActive;
             if(released) lastExplosionTime = Date.now();
